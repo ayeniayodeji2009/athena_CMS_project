@@ -1,6 +1,6 @@
 import AdminNav from '../../../components/admin_components/AdminNav.js';
 import AdminCreateContent from '../../../components/admin_components/AdminCreateContent.js';
-import GoBackButton from '../../../components/UI_General/GoBackButton.js';
+// import GoBackButton from '../../../components/UI_General/GoBackButton.js';
 
 
 
@@ -9,7 +9,7 @@ function CreateContentAdmin() {
 
     return (
         <>
-            <GoBackButton />
+            {/* <GoBackButton /> */}
             
             <p>Navigation</p>
             <AdminNav />

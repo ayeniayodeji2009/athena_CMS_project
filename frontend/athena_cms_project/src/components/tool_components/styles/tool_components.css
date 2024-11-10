@@ -1,0 +1,10 @@
+.editor {
+    width: 90%;
+    margin: auto
+}
+
+.react-quill-editor {
+    width: 70%;
+    height: 300px;
+    margin: 5px auto;
+}

@@ -1,0 +1,12 @@
+.admin_update_container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.admin_update_container-button {
+    display: flex;
+    justify-content: space-around;
+    margin: 5px auto;
+    border: yellow 1px solid;
+}

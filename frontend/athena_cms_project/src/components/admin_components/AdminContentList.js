@@ -1,7 +1,8 @@
 // frontend/src/components/ContentList.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import AdminDelete from "./AdminDelete";
 // import AdminUpdate from "./AdminUpdate"
+import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 import { useNavigate } from "react-router-dom";
 
 
@@ -9,10 +10,12 @@ const AdminContentList = () => {
     const [contentList, setContentList] = useState([]);
     // const [navToUpdate, setNavToUpdate] = useState(false)
     // const [currentContentID, setCurrentContentID] = useState(2)
+    const { setUpdateContentID } = useContext(SharePreviewDataContext);
     const navigate = useNavigate();
 
     const navigateToUpdatePage = (content_id) => {
         navigate(`/admin/updatecontent/`, { state: {contentID: content_id} }); // from const navigate above
+        setUpdateContentID(content_id)
         console.log(content_id)
     };
 
@@ -45,8 +48,8 @@ const AdminContentList = () => {
                         <h3>{content.title} <button onClick={() => navigateToViewPage(content.id)}>view</button></h3>
                         <p>{content.category}</p>
                         {/* {setCurrentContentID(content.id)} */}
-                        <button onClick={() => navigateToUpdatePage(content.id)}>Update Content</button>
-                        <AdminDelete content_id={content.id} />
+                        <button onClick={() => { navigateToUpdatePage(content.id)}}>Update Content</button>
+                        <AdminDelete content_id={content.id} contentList={contentList} setContentList={setContentList} />
                     </li>
                 )).reverse()}
             </ol>
