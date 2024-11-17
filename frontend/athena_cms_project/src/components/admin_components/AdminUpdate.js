@@ -10,46 +10,45 @@ import "react-quill/dist/quill.snow.css";
 
 
 export default function AdminUpdate() {
-    const { updateTitle, updateBody, updateContentID, setUpdateTitle,  setUpdateBody/*, setUpdateContentID*/ } = useContext(SharePreviewDataContext);
+    const { updateTitle, updateBody, updateContentID, setUpdateTitle,  setUpdateBody, setUpdateContentID } = useContext(SharePreviewDataContext);
     const navigate = useNavigate();
     const location = useLocation();
 
     const content_id = location.state.contentID; // from content list
     const previewTitle = location.state.previewTitle;
     const previewBody = location.state.previewBody
-    const previewContentID = location.state.previewContentID
+    // const previewContentID = location.state.previewContentID
 
-    console.log(location)
+    // console.log(location)
 
     // setUpdateContentID(previewContentID)
-    console.log(content_id)
-    console.log(updateContentID)
+    // console.log(content_id)
+    // console.log(updateContentID) // string Value
     // console.log(previewContentID)
+   
 
     
     const [databaseTitle, setDatabaseTitle] = useState("");
     const [databaseBody, setDatabaseBody] = useState("");
-    // const [localStorageTitle, setLocalStorageTitle] = useState("");
-    // const [localStorageBody, setLocalStorageBody] = useState("");
 
 
 
-
+    // Getting Data from database to be edited
     useEffect(() => {
         fetch(`http://127.0.0.1:5000/content/${updateContentID}`)
             .then((res) => res.json())
             .then((data) => {
-                // setUpdateTitle(data.title); //
-                // setUpdateBody(data.body); //
+                // Passing Data from Database to state
                 setDatabaseTitle(data.title);
                 setDatabaseBody(data.body);
             })
             .catch((error) => console.error("Error fetching content:", error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); //content_id, previewBody, previewTitle, updateBody, updateTitle
+    }, []); 
 
     
 
+    // Submit or Push Update to Database
     function handleUpdate() {
         fetch(`http://127.0.0.1:5000/content/${updateContentID}`, {
             method: "PUT",
@@ -70,17 +69,20 @@ export default function AdminUpdate() {
             .catch((error) => console.error("Error updating content:", error));
     };
 
+
+    // Navigation to Preview content or Component
     function handlePreview() {
         navigate("/previewupdatecontent", { state: { title: updateTitle, body: updateBody, content_ID: updateContentID } });
-        // setUpdateContentID(updateContentID)
     };
+
+
 
     
     // Logics for managing editing data between AdminUpdate component and Preview Component
     useEffect(() => {
 
+        // For Title
         if (updateTitle === "" || updateTitle === undefined) {
-            
             setUpdateTitle(databaseTitle)
         } else if (previewTitle !== undefined) {
             if (databaseTitle === updateTitle && databaseTitle.length === updateTitle.length) {
@@ -90,9 +92,8 @@ export default function AdminUpdate() {
         
 
 
-
+        // For Body
         if (updateBody === "" || updateBody === undefined) {
-           
             setUpdateBody(databaseBody)
         } else if (previewBody !== undefined) {
 
@@ -101,16 +102,66 @@ export default function AdminUpdate() {
             }
 
         }
-        
-      
     },[databaseBody, databaseTitle, previewBody, previewTitle, setUpdateBody, setUpdateTitle, updateBody, updateTitle])
 
 
 
+    /* Saving updated data to local storage for reusability if browser is refreshed: when main state is not empty, 
+    save current data to local storage */
+    useEffect(() => {
+        if (updateTitle !== "" || updateTitle === null) {
+            // Save data to local storage
+            localStorage.setItem('localUpdateTitle', updateTitle);
+        }
+
+        if (updateBody !== "" || updateBody === null) {
+            // Save data to local storage
+            localStorage.setItem('localUpdateBody', updateBody);
+        }
+
+
+        if (updateContentID === content_id) {
+            // Save data to local storage
+            localStorage.setItem('localUpdateContentID', updateContentID)
+        } 
+    },[updateBody, updateTitle, content_id, updateContentID])
+
     
-    console.log("from Database", databaseTitle, databaseBody)
-    console.log("Preview:->  ",previewTitle, previewBody, previewContentID)
-    console.log("Context API:-> ", updateTitle, updateBody, updateContentID)
+    // console.log("from Database", databaseTitle, databaseBody)
+    // console.log("Preview:->  ",previewTitle, previewBody, previewContentID)
+    // console.log("Context API:-> ", updateTitle, updateBody, updateContentID)
+
+
+    // Function for reloading page and resturing current data back to component
+    useEffect(() => {        
+        if (performance.getEntriesByType("navigation")[0].type === "reload") {
+          console.log("Page was refreshed");
+          // Add additional logic here for refresh handling
+
+          // Get data from local storage and pass data to Context API for reusability
+          if (updateTitle === "") {
+            const localUpdateTitleFromLS = localStorage.getItem('localUpdateTitle');
+            setUpdateTitle(localUpdateTitleFromLS)
+          }
+          
+ 
+          if (updateBody === "") {
+            const localUpdateBodyFromLS = localStorage.getItem('localUpdateBody');
+            setUpdateBody(localUpdateBodyFromLS)
+          }
+
+          if (updateContentID === "") {
+            const localUpdateContent_ID_FromLS = localStorage.getItem('localUpdateContentID')
+            setUpdateContentID(localUpdateContent_ID_FromLS)
+          }
+        } else {
+          console.log("Page loaded normally");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+  
+
+     
 
     return (
         <AdminUpdateChild

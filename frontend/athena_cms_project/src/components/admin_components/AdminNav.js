@@ -8,6 +8,7 @@ const AdminNav = () => {
             <h1>Admin Dashboard</h1>
             <nav>
                 <ul>
+                    <li><NavLink to="/">Home</NavLink></li>
                     <li><NavLink to="/admin/dashboard">Admin Dashboard</NavLink></li>
                     <li><NavLink to="/admin/contents">Admin Contents</NavLink></li>
                     <li><NavLink to="/admin/createcontent">Create New Content</NavLink></li>

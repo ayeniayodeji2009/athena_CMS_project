@@ -5,7 +5,8 @@ export const SharePreviewDataContext = createContext();
 export const SharePreviewDataProvider = ({ children }) => {
     const [updateTitle, setUpdateTitle] = useState('');
     const [updateBody, setUpdateBody] = useState('');
-    const [updateContentID, setUpdateContentID] = useState('')
+    const [updateContentID, setUpdateContentID] = useState('');
+   
 
     const [createTitle, setCreateTitle] = useState("");
     const [createBody, setCreateBody] = useState("");
