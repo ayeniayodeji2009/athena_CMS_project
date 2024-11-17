@@ -3,6 +3,7 @@ import AdminDelete from "./AdminDelete";
 // import AdminUpdate from "./AdminUpdate"
 import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 import { useNavigate } from "react-router-dom";
+import "./styles/admin_components.scss"
 
 
 const AdminContentList = () => {
@@ -34,7 +35,7 @@ const AdminContentList = () => {
     }, []);
 
     return (
-        <div>
+        <div className="admin_content_container">
             <h2>Admin Content List</h2>
             <ol>
                 {contentList.map((content) => (

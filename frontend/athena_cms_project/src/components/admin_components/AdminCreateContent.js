@@ -5,6 +5,7 @@ import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 import "react-quill/dist/quill.snow.css";
 // import DraftEditor from "../tool_components/DraftEditor";
 import ReactQuillEditor from "../tool_components/ReactQuillEditor";
+import "./styles/admin_components.scss"
 
 const AdminCreateContent = () => {
     const navigate = useNavigate();
@@ -26,8 +27,10 @@ const AdminCreateContent = () => {
             alert("Content saved:", data)
 
             // Clear input field
-            setCreateTitle("")
-            setCreateBody("")
+            setCreateTitle()
+            setCreateBody()
+            localStorage.removeItem('localCreateTitle')
+            localStorage.removeItem('localCreateBody')
             navigate(`/admin/contents`);
         });
     };
@@ -57,8 +60,10 @@ const AdminCreateContent = () => {
 
     // Navigating back to content list and clearing state data
     function goBackToContentList() {
-        setCreateTitle("")
-        setCreateBody("")
+        setCreateTitle()
+        setCreateBody()
+        localStorage.removeItem('localCreateTitle')
+        localStorage.removeItem('localCreateBody')
         navigate("/admin/contents")
     }
 

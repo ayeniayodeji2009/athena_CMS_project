@@ -5,7 +5,7 @@ import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 // import GoBackButton from "../UI_General/GoBackButton";
 import ReactQuillEditor from "../tool_components/ReactQuillEditor";
 import "react-quill/dist/quill.snow.css";
-// import "./styles/admin_components.scss";
+import "./styles/admin_components.scss";
 
 
 
@@ -60,8 +60,10 @@ export default function AdminUpdate() {
                 alert("Content updated successfully!");
                 
                 // Clear the Context API for next use
-                setUpdateTitle("")
-                setUpdateBody("")
+                setUpdateTitle()
+                setUpdateBody()
+                localStorage.removeItem('localUpdateTitle')
+                localStorage.removeItem('localUpdateBody')
 
                 // Go back to content list
                 navigate(`/admin/contents`);
@@ -194,6 +196,8 @@ function AdminUpdateChild ({ updateTitle, updateBody, setUpdateTitle, setUpdateB
     function goBackToContentList() {
         setUpdateTitle(); 
         setUpdateBody(); 
+        localStorage.removeItem('localUpdateTitle')
+        localStorage.removeItem('localUpdateBody')
         navigate("/admin/contents")
     }
 
@@ -205,7 +209,7 @@ function AdminUpdateChild ({ updateTitle, updateBody, setUpdateTitle, setUpdateB
     return (
         <div className="admin_update_container">
             {/* <GoBackButton /> */}
-            <button onClick={goBackToContentList}>Go Back</button>
+            <button onClick={goBackToContentList} className="admin_update-button">Go Back</button>
             <h2>Edit Content</h2>
             <input type="text" placeholder="Title" value={updateTitle} onChange={handleChange} /* required */ />
             <ReactQuillEditor value={updateBody} setValue={setUpdateBody} />

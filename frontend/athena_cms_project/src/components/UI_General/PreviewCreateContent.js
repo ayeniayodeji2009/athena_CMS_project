@@ -1,8 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
-
-
+import "./styles/ui_general.scss"
 
 
 function PreviewCreateContent() {
@@ -31,9 +30,10 @@ function PreviewCreateContent() {
             alert("Content saved:", data)
 
             //Clear input field
-            setCreateTitle("")
-            setCreateBody("")
-
+            setCreateTitle()
+            setCreateBody()
+            localStorage.removeItem('localCreateTitle')
+            localStorage.removeItem('localCreateBody')
             // Go back to list
             navigate(`/admin/contents`);
         });
@@ -74,7 +74,7 @@ function PreviewCreateContent() {
 
 
     return (
-        <div>
+        <div className="preview_create_container">
             <button onClick={handleBackToAdminCreate}>Go Back</button>
             <h2>Preview Content</h2>
             <h3>{createTitle}</h3>

@@ -1,12 +1,56 @@
+// For editor
+.ql-align-right {
+    display: flex;
+    justify-content: right;
+}
+
+.ql-align-left {
+    display: flex;
+    justify-content: left;
+}
+
+.ql-align-center {
+    display: flex;
+    justify-content: center;
+}
+
+
+
+// For Components
+.admin_content_container {
+    background-color: blue;
+}
+
+
 .admin_update_container {
     display: flex;
     justify-content: center;
-    flex-direction: row;
+    flex-direction: column;
+}
+
+.admin_update_container > input {
+    width: 30%;
+    height: 1rem;
+    margin: 5px auto;
 }
 
 .admin_update_container-button {
     display: flex;
     justify-content: space-around;
+    flex-direction: row;
+    width: 50%;
+    height: 2rem;
+    padding: 5px;
     margin: 5px auto;
-    border: yellow 1px solid;
+    border: blue 1px solid;
 }
+
+.admin_update-button {
+    // width: 1rem;
+    margin: 5px auto;
+    padding: 5px;
+}
+
+
+// <p>The first day is great</p><p><br></p><p class="ql-align-right">the second day is awsome</p><p><br></p><p>the third day is going to be interesting</p><p><br></p><p class="ql-align-right">Tuesday will be lite</p>
+// <p>The first day is great</p><p><br></p><p class="ql-align-right">the second day is awsome</p><p><br></p><p>the third day is going to be interesting</p><p><br></p><p>Tuesday will be lite</p>

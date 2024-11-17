@@ -2,6 +2,8 @@ import React, { /*useState,*/ useContext, useEffect } from "react";
 import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 import { useNavigate, useLocation } from "react-router-dom";
 // import GoBackButton from "./GoBackButton";
+import "./styles/ui_general.scss";
+
 
 const PreviewUpdateContent = () => {
     const { updateTitle, updateBody, updateContentID, setUpdateTitle, setUpdateBody, setUpdateContentID } = useContext(SharePreviewDataContext);
@@ -28,8 +30,10 @@ const PreviewUpdateContent = () => {
             console.log("inspect preview submit success ", updateTitle, updateBody)
 
             // Clear the Context API for next use
-            setUpdateTitle("")
-            setUpdateBody("")
+            setUpdateTitle()
+            setUpdateBody()
+            localStorage.removeItem('localUpdateTitle')
+            localStorage.removeItem('localUpdateBody')
 
             // Go back to content list
             navigate("/admin/contents");
