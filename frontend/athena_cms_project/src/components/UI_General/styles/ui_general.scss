@@ -3,7 +3,7 @@
     justify-content: right;
 }
 
-.ql-align-left {
+p {
     display: flex;
     justify-content: left;
 }
@@ -13,7 +13,10 @@
     justify-content: center;
 }
 
-
+.ql-align-justify {
+    display: flex;
+    justify-content: flex-start;
+}
 
 
 

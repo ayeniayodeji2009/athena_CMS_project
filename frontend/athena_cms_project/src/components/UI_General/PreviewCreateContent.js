@@ -44,6 +44,8 @@ function PreviewCreateContent() {
     // Navigate Back to Create Content Component
     function handleBackToAdminCreate() {
         navigate("/admin/createcontent", { state: { _title: previewCreateTitle, _body: previewCreateBody } });
+        // setCreateTitle(localStorage.getItem('localCreateTitle'))
+        // setCreateBody(localStorage.getItem('localCreateBody'))
     };
 
 

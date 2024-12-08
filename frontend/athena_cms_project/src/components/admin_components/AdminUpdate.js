@@ -3,6 +3,7 @@ import React, { /**/useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 // import GoBackButton from "../UI_General/GoBackButton";
+import AdminVersionControlHistory from "./AdminVersionControlHistory"
 import ReactQuillEditor from "../tool_components/ReactQuillEditor";
 import "react-quill/dist/quill.snow.css";
 import "./styles/admin_components.scss";
@@ -167,6 +168,7 @@ export default function AdminUpdate() {
 
     return (
         <AdminUpdateChild
+            content_id={updateContentID}
             updateTitle={updateTitle}
             updateBody={updateBody}
             setUpdateTitle={setUpdateTitle}
@@ -190,7 +192,7 @@ export default function AdminUpdate() {
 
 
 // AdminUpdate.js
-function AdminUpdateChild ({ updateTitle, updateBody, setUpdateTitle, setUpdateBody, handleUpdate, handlePreview/* setCurrentTitle, setCurrentBody, */}) {
+function AdminUpdateChild ({ content_id, updateTitle, updateBody, setUpdateTitle, setUpdateBody, handleUpdate, handlePreview/* setCurrentTitle, setCurrentBody, */}) {
     const navigate = useNavigate();
 
     function goBackToContentList() {
@@ -205,7 +207,7 @@ function AdminUpdateChild ({ updateTitle, updateBody, setUpdateTitle, setUpdateB
         setUpdateTitle(e.target.value)
     }
 
-    
+
     return (
         <div className="admin_update_container">
             {/* <GoBackButton /> */}
@@ -222,6 +224,11 @@ function AdminUpdateChild ({ updateTitle, updateBody, setUpdateTitle, setUpdateB
                 <button onClick={handleUpdate}>Update</button>
                 <button onClick={handlePreview}>Preview Update</button>
             </div>
+
+
+            <br />
+            <br />
+            <AdminVersionControlHistory content_id={content_id} setUpdateBody={setUpdateBody} /*onLoadVersion={handleLoadVersion}*/ />
         </div>
     );
 };

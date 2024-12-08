@@ -14,7 +14,8 @@ const ReactQuillEditor = ({value, setValue}) => {
             [{ 'color': [] }, { 'background': [] }],
             [{ 'script': 'sub' }, { 'script': 'super' }],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            [{ 'align': [] }],
+            // [{ 'align': [] }],
+            [{ 'align': '' }, { 'align': 'center' }, { 'align': 'right' }, { 'align': 'justify' }],
             ['link', 'image', 'video'],
             ['clean']
         ]

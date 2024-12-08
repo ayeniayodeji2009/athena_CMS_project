@@ -1,3 +1,4 @@
+// <p>I </p><p class="ql-align-right">Think</p><p>It is</p><p class="ql-align-center">HIGH TIME</p><p class="ql-align-justify">We justify.</p>
 // For editor
 .ql-align-right {
     display: flex;
@@ -14,7 +15,10 @@
     justify-content: center;
 }
 
-
+.ql-align-justify {
+    display: flex;
+    justify-content: flex-start;
+}
 
 // For Components
 .admin_content_container {

@@ -91,8 +91,8 @@ def update_content(content_id):
         content.category = data["category"]
     if "meta_description" in data:
         content.meta_description = data["meta_description"]
-    
-    # Version control - store the old version
+
+    # Version control - store the new version of update content to content version table in DB
     version = ContentVersion(content_id=content.id, body=content.body)
     db.session.add(version)
     db.session.commit()
@@ -120,6 +120,34 @@ def get_all_content():
         } for content in content_list
     ]
     return jsonify(result)
+
+
+
+
+# Version Control Routs
+# Getting Old Content Versions from Content Version table in DB
+@app.route("/content/<int:content_id>/versions", methods=["GET"])
+def get_versions(content_id):
+    versions = ContentVersion.query.filter_by(content_id=content_id).order_by(ContentVersion.timestamp.desc()).all()
+    version_list = [
+        {
+            "id": version.id,
+            "body": version.body,
+            "timestamp": version.timestamp,
+        }
+        for version in versions
+    ]
+    return jsonify(version_list)
+
+
+# Delete Version from Content Version
+@app.route("/content/<int:content_id>/versions/<int:version_id>", methods=["DELETE"])
+def delete_version(content_id, version_id):
+    version = ContentVersion.query.filter_by(id=version_id, content_id=content_id).first_or_404()
+    db.session.delete(version)
+    db.session.commit()
+    return '', 204  # Return a 204 No Content response
+
 
 # Run the application
 if __name__ == "__main__":
