@@ -7,24 +7,22 @@ const AdminDelete = ({ content_id, contentList, setContentList }) => {
     // console.log(content_id)
     // const navigate = useNavigate();
 
-    const handleDelete = () => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this content ?");
-        if (confirmDelete) {
+    const handleDelete = (para_content_id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this content and all its versions?");
 
-            
-            fetch(`http://127.0.0.1:5000/content/${content_id}`, {
+        if (confirmDelete) {
+            fetch(`http://127.0.0.1:5000/content/${para_content_id}`, {
                 method: "DELETE",
             })
                 .then((res) => {
-                    // Delete from UI
-                    const updateContentList = contentList.filter(content => content.id !== content_id)
-                    setContentList(updateContentList)
-
-
                     // Server Response
                     if (res.status === 204) {
-                        alert("Content deleted successfully!");
+                        alert("Content and all versions deleted successfully!");
                         //navigate('/admin/contents'); // Refresh content list
+
+                         // Delete from UI
+                        const updateContentList = contentList.filter(content => content.id !== content_id)
+                        setContentList(updateContentList)
                     } else {
                         alert("Failed to delete content.");
                     }
@@ -38,7 +36,7 @@ const AdminDelete = ({ content_id, contentList, setContentList }) => {
 
     return (
         <div>
-            <button onClick={handleDelete} style={{ color: 'red' }}>
+            <button onClick={() => handleDelete(content_id)} style={{ color: 'red' }}>
                 Delete Content
             </button>
         </div>

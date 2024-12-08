@@ -39,7 +39,9 @@ export default AdminVersionControlHistory;
 function DeleteVersion ({ content_id, version_id, versions, setVersions }) {
 
     const deleteVersion = (para_version_id) => {
-        if (window.confirm("Are you sure you want to Delete this version?")) {
+
+        const confirmDelete = window.confirm("Are you sure you want to Delete this version?")
+        if (confirmDelete) {
             fetch(`http://127.0.0.1:5000/content/${content_id}/versions/${para_version_id}`, {
                 method: "DELETE",
             })
