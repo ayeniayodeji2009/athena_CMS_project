@@ -11,6 +11,13 @@ const AdminVersionControlHistory = ({ content_id, setUpdateBody }) => {
     }, [content_id]);
 
 
+    function restoreContentVersionToEditor (para_content_body) {
+        const confirmRestoreVersion = window.confirm("Are you sure you want to Restore this version into the Editor ?")
+        if (confirmRestoreVersion) {
+            setUpdateBody(para_content_body) // set content body to current update state for Editor use
+        }
+    }
+
     return (
         <div>
             <h3>Version History</h3>
@@ -22,7 +29,7 @@ const AdminVersionControlHistory = ({ content_id, setUpdateBody }) => {
                         <div dangerouslySetInnerHTML={{ __html: version.body }} style={{border: "1px green solid", width: "50%"}}/>
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", width: "50%"}}>
                             <p>Timestamp: {new Date(version.timestamp).toLocaleString()}</p>
-                            <button onClick={() => setUpdateBody(version.body)}>Restore Version</button>
+                            <button onClick={() => restoreContentVersionToEditor(version.body)}>Restore Version</button>
                             <DeleteVersion content_id={content_id} version_id={version.id} versions={versions} setVersions={setVersions}/>
                         </div>
                     </li>
