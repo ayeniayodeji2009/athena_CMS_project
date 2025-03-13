@@ -25,6 +25,21 @@
     background-color: blue;
 }
 
+.admin_content_container_item {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    border: 1px black solid;
+    margin: 10px 0px;
+}
+
+.admin_content_container_item_a {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    border: 1px yellow solid;
+}
 
 .admin_update_container {
     display: flex;

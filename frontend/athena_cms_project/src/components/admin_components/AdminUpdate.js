@@ -5,18 +5,24 @@ import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 // import GoBackButton from "../UI_General/GoBackButton";
 import AdminVersionControlHistory from "./AdminVersionControlHistory"
 import ReactQuillEditor from "../tool_components/ReactQuillEditor";
+import ImageUpload from "../tool_components/ImageUpload"
+import Loading from "../UI_General/Loading";
 import "react-quill/dist/quill.snow.css";
 import "./styles/admin_components.scss";
 
-
+// category, setCategory, tags, setTags, metaDescription, setMetaDescription
 
 export default function AdminUpdate() {
-    const { updateTitle, updateBody, updateContentID, setUpdateTitle,  setUpdateBody, setUpdateContentID } = useContext(SharePreviewDataContext);
+    const { updateTitle, updateBody, updateContentID, category, tags, metaDescription, setUpdateTitle, updateImage, setUpdateImage, setUpdateBody, setUpdateContentID, setCategory, setTags, setMetaDescription, navigateStatus, setNavigateStatus} = useContext(SharePreviewDataContext);
+    const [loading, setLoading] = useState(true)
+
+    
     const navigate = useNavigate();
     const location = useLocation();
 
     const content_id = location.state.contentID; // from content list
     const previewTitle = location.state.previewTitle;
+    const previewImage = location.state.previewImage
     const previewBody = location.state.previewBody
     // const previewContentID = location.state.previewContentID
 
@@ -30,9 +36,11 @@ export default function AdminUpdate() {
 
     
     const [databaseTitle, setDatabaseTitle] = useState("");
+    const [databaseImage, setDatabaseImage] = useState({"image_code": ""})
     const [databaseBody, setDatabaseBody] = useState("");
 
-
+    // const localUpdateImageFromLS = localStorage.getItem('localUpdateImage');
+    // if (localUpdateImageFromLS && updateImage["image_code"])
 
     // Getting Data from database to be edited
     useEffect(() => {
@@ -40,21 +48,36 @@ export default function AdminUpdate() {
             .then((res) => res.json())
             .then((data) => {
                 // Passing Data from Database to state
-                setDatabaseTitle(data.title);
+                setDatabaseTitle(data.title);                
+                // setUpdateImage({...updateImage, "image_code": data.image_url})
+                setDatabaseImage({...databaseImage, "image_code": data.image_url})
                 setDatabaseBody(data.body);
+                setCategory(data.category)
+                setTags(data.tags)
+                setMetaDescription(data.meta_description)
+                setLoading(false)
             })
             .catch((error) => console.error("Error fetching content:", error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); 
 
     
+    console.log(databaseImage)
 
+    // console.log(updateImage)
     // Submit or Push Update to Database
     function handleUpdate() {
         fetch(`http://127.0.0.1:5000/content/${updateContentID}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: updateTitle, body: updateBody }),
+            body: JSON.stringify({ 
+                title: updateTitle,
+                image_url: updateImage["image_code"],
+                body: updateBody,
+                category,
+                tags,
+                meta_description: metaDescription 
+            }),
         })
             .then((res) => res.json())
             .then(() => {
@@ -63,7 +86,14 @@ export default function AdminUpdate() {
                 // Clear the Context API for next use
                 setUpdateTitle()
                 setUpdateBody()
+                setCategory()
+                setTags()
+                setMetaDescription()
+
+                // Clear data in local storage
                 localStorage.removeItem('localUpdateTitle')
+                localStorage.removeItem('localUpdateImage')
+                localStorage.removeItem('localUpdateImageCopy')
                 localStorage.removeItem('localUpdateBody')
 
                 // Go back to content list
@@ -76,6 +106,7 @@ export default function AdminUpdate() {
     // Navigation to Preview content or Component
     function handlePreview() {
         navigate("/previewupdatecontent", { state: { title: updateTitle, body: updateBody, content_ID: updateContentID } });
+        setNavigateStatus("navigate") //detecting navigation stored to context API
     };
 
 
@@ -92,22 +123,42 @@ export default function AdminUpdate() {
                 setUpdateTitle(previewTitle)
             }
         }
-        
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // if (previewImage["image_code"] !== )
+        // For Image
+        if (updateImage.image_code === "" || updateImage.image_code === null || updateImage.image_code === undefined) {
+            setUpdateImage({...updateImage, "image_code": databaseImage.image_code})
+        }
+        // else if (previewImage.image_code !== undefined || previewImage.image_code !== null) {
+        //     if (databaseImage.image_code === updateImage.image_code) {     /*&& databaseTitle.length === updateTitle.length*/
+        //         setUpdateImage({...updateImage, "image_code": previewImage.image_code})
+        //     }
+        // }
+        /* Before going to Preview page(upon entering into the update page), existing preview variable is has value "undefined". 
+           After leaving preview page comingback to update page, previewImage becomes an object which has value.*/
+        if (previewImage !== undefined || previewImage !== null) {
+            console.log("I have gone to the preview page, and I'm back to the update page - Image speaking")
+            // if (databaseImage.image_code === previewImage.image_code) {
+            //     setUpdateImage({...updateImage, "image_code": previewImage.image_code})
+            // } else {
+            //     setUpdateImage({...updateImage, "image_code": databaseImage.image_code})
+            // }
+        }
 
         // For Body
         if (updateBody === "" || updateBody === undefined) {
             setUpdateBody(databaseBody)
         } else if (previewBody !== undefined) {
-
             if (databaseBody === updateBody && databaseBody.length === updateBody.length) {
                 setUpdateBody(previewBody)
             }
 
         }
-    },[databaseBody, databaseTitle, previewBody, previewTitle, setUpdateBody, setUpdateTitle, updateBody, updateTitle])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[databaseBody, /*databaseImage.image_code, updateImage.image_code,*/ databaseTitle, previewBody, /*previewImage.image_code,*/ previewTitle, setUpdateBody, setUpdateImage, setUpdateTitle, updateBody, updateImage, updateTitle])
 
-
+    console.log(previewImage)
 
     /* Saving updated data to local storage for reusability if browser is refreshed: when main state is not empty, 
     save current data to local storage */
@@ -116,6 +167,18 @@ export default function AdminUpdate() {
             // Save data to local storage
             localStorage.setItem('localUpdateTitle', updateTitle);
         }
+
+        if (updateImage["image_code"] !== "" || updateImage["image_code"] === null || updateImage["image_code"] === undefined) {
+            // Save data to local storage
+            localStorage.setItem('localUpdateImage', updateImage["image_code"]);
+
+            // if image is a truety value, save as a copy for reusability and update if there is change to original value
+            if (updateImage["image_code"]) {
+                localStorage.setItem('localUpdateImageCopy', updateImage["image_code"]);
+            }
+        }
+
+        // if ()
 
         if (updateBody !== "" || updateBody === null) {
             // Save data to local storage
@@ -127,17 +190,29 @@ export default function AdminUpdate() {
             // Save data to local storage
             localStorage.setItem('localUpdateContentID', updateContentID)
         } 
-    },[updateBody, updateTitle, content_id, updateContentID])
+    },[updateBody, updateTitle, content_id, updateContentID, updateImage])
 
     
     // console.log("from Database", databaseTitle, databaseBody)
     // console.log("Preview:->  ",previewTitle, previewBody, previewContentID)
     // console.log("Context API:-> ", updateTitle, updateBody, updateContentID)
 
+    /* Custom made Logic handling page route action status */
+    let navType
+    console.log(navType)
 
-    // Function for reloading page and resturing current data back to component
+    if (navigateStatus === "navigate") {
+      navType = navigateStatus
+    } else {
+      navType = "reload"
+    }
+    /* Custom made Logic handling page route action status */
+    console.log(navType)
+
+
+    // Function for reloading page and restoring current data back to component
     useEffect(() => {        
-        if (performance.getEntriesByType("navigation")[0].type === "reload") {
+        if (navType === "reload") {
           console.log("Page was refreshed");
           // Add additional logic here for refresh handling
 
@@ -147,24 +222,47 @@ export default function AdminUpdate() {
             setUpdateTitle(localUpdateTitleFromLS)
           }
           
+          console.log(`Reload Title say ${updateTitle}`)
+
+
+          //Error Cleared
+          if (updateImage["image_code"] === null || updateImage["image_code"] === undefined) {
+            const localUpdateImageFromLS = localStorage.getItem('localUpdateImageCopy');
+            setUpdateImage({...updateImage, "image_code": localUpdateImageFromLS})
+          }
+          console.log(updateImage)
+          console.log(`Reload image say ${updateImage["image_code"]}`)
+
  
           if (updateBody === "") {
             const localUpdateBodyFromLS = localStorage.getItem('localUpdateBody');
             setUpdateBody(localUpdateBodyFromLS)
           }
+          console.log(`Reload Body say ${updateBody}`)
+
 
           if (updateContentID === "") {
             const localUpdateContent_ID_FromLS = localStorage.getItem('localUpdateContentID')
             setUpdateContentID(localUpdateContent_ID_FromLS)
           }
-        } else {
+
+          // Change State of Loading
+          setLoading(false)
+        } else if (navType === "navigate") {
           console.log("Page loaded normally");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   
 
-     
+    if (loading) {
+        return <Loading />; // Show loading component while fetching data
+    }
+
+
+    // if (localUpdateImageFromLS !== "" || localUpdateImageFromLS !== null) {
+    //     setUpdateImage({...updateImage, "image_code": localUpdateImageFromLS})
+    // } else {
 
     return (
         <AdminUpdateChild
@@ -173,10 +271,20 @@ export default function AdminUpdate() {
             updateBody={updateBody}
             setUpdateTitle={setUpdateTitle}
             setUpdateBody={setUpdateBody}
+            // imagePreview={imagePreview} 
+            // setImagePreview={setImagePreview}
+            updateImage={updateImage}
+            setUpdateImage={setUpdateImage}
             handleUpdate={handleUpdate}
             handlePreview={handlePreview}
             // setCurrentTitle={setCurrentTitle}
             // setCurrentBody={setCurrentBody}
+            category={category}
+            setCategory={setCategory} 
+            tags={tags} 
+            setTags={setTags}
+            metaDescription={metaDescription} 
+            setMetaDescription={setMetaDescription}
         />
     );
 };
@@ -192,13 +300,19 @@ export default function AdminUpdate() {
 
 
 // AdminUpdate.js
-function AdminUpdateChild ({ content_id, updateTitle, updateBody, setUpdateTitle, setUpdateBody, handleUpdate, handlePreview/* setCurrentTitle, setCurrentBody, */}) {
+function AdminUpdateChild ({ content_id, updateTitle, updateBody, updateImage, setUpdateImage, setUpdateTitle, setUpdateBody, handleUpdate, handlePreview,/* setCurrentTitle, setCurrentBody, */category, setCategory, tags, setTags, metaDescription, setMetaDescription }) {
     const navigate = useNavigate();
 
     function goBackToContentList() {
-        setUpdateTitle(); 
-        setUpdateBody(); 
+        setUpdateTitle();
+        setUpdateImage({"image_code": ""}) 
+        setUpdateBody();
+        setCategory()
+        setTags()
+        setMetaDescription() 
         localStorage.removeItem('localUpdateTitle')
+        localStorage.removeItem('localUpdateImage')
+        localStorage.removeItem('localUpdateImageCopy')
         localStorage.removeItem('localUpdateBody')
         navigate("/admin/contents")
     }
@@ -214,7 +328,34 @@ function AdminUpdateChild ({ content_id, updateTitle, updateBody, setUpdateTitle
             <button onClick={goBackToContentList} className="admin_update-button">Go Back</button>
             <h2>Edit Content</h2>
             <input type="text" placeholder="Title" value={updateTitle} onChange={handleChange} /* required */ />
+            <ImageUpload setCurrentImageUpload={setUpdateImage} currentImageUpload={updateImage} />
             <ReactQuillEditor value={updateBody} setValue={setUpdateBody} />
+            <br />
+            <br />
+            <div>
+                <input
+                    type="text"
+                    placeholder="Category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    type="text"
+                    placeholder="Tags (comma-separated)"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    type="text"
+                    placeholder="Meta Description"
+                    value={metaDescription}
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                />
+            </div>
           
             <br />
             <br />
@@ -228,7 +369,7 @@ function AdminUpdateChild ({ content_id, updateTitle, updateBody, setUpdateTitle
 
             <br />
             <br />
-            <AdminVersionControlHistory content_id={content_id} setUpdateBody={setUpdateBody} /*onLoadVersion={handleLoadVersion}*/ />
+            <AdminVersionControlHistory content_id={content_id} setUpdateTitle={setUpdateTitle} setUpdateImage={setUpdateImage} setUpdateBody={setUpdateBody} /*onLoadVersion={handleLoadVersion}*/ />
         </div>
     );
 };

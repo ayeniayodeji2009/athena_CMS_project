@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const AdminVersionControlHistory = ({ content_id, setUpdateBody }) => {
+const AdminVersionControlHistory = ({ content_id, setUpdateTitle, setUpdateImage, setUpdateBody }) => {
     const [versions, setVersions] = useState([]);
 
     useEffect(() => {
@@ -11,12 +11,16 @@ const AdminVersionControlHistory = ({ content_id, setUpdateBody }) => {
     }, [content_id]);
 
 
-    function restoreContentVersionToEditor (para_content_body) {
+    function restoreContentVersionToEditor (para_content_title, para_content_image_url, para_content_body) {
         const confirmRestoreVersion = window.confirm("Are you sure you want to Restore this version into the Editor ?")
         if (confirmRestoreVersion) {
+            setUpdateTitle(para_content_title)
+            setUpdateImage({"image_code": para_content_image_url})
             setUpdateBody(para_content_body) // set content body to current update state for Editor use
         }
     }
+
+    console.log(versions)
 
     return (
         <div>
@@ -26,10 +30,17 @@ const AdminVersionControlHistory = ({ content_id, setUpdateBody }) => {
                     <li key={version.id}>
                         <p>Version ID: {version.id}</p>
                         <p style={{fontWeight: "bold"}}>Content: </p>
+                        <p>Title:</p>
+                        <div dangerouslySetInnerHTML={{ __html: version.title }} style={{border: "1px green solid", width: "50%", height: "50%"}}/>
+                        <p>Content Image:</p>
+                        <div style={{border: "1px green solid", width: "50%"}}>
+                            {version.image_url && <img src={version.image_url} alt="Image_version" style={{ maxWidth: "20%" }} />}
+                        </div>
+                        <p>Body:</p>
                         <div dangerouslySetInnerHTML={{ __html: version.body }} style={{border: "1px green solid", width: "50%"}}/>
                         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", width: "50%"}}>
                             <p>Timestamp: {new Date(version.timestamp).toLocaleString()}</p>
-                            <button onClick={() => restoreContentVersionToEditor(version.body)}>Restore Version</button>
+                            <button onClick={() => restoreContentVersionToEditor(version.title, version.image_url, version.body)}>Restore Version</button>
                             <DeleteVersion content_id={content_id} version_id={version.id} versions={versions} setVersions={setVersions}/>
                         </div>
                     </li>

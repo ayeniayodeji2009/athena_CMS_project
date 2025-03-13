@@ -21,6 +21,7 @@ import ViewIndividualContent from './components/UI_General/ViewIndividualContent
 import PreviewUpdateContent from './components/UI_General/PreviewUpdateContent';
 // import AdminCreateContent from './components/admin_components/AdminCreateContent';
 import PreviewCreateContent from './components/UI_General/PreviewCreateContent';
+// import Test from './components/UI_General/Test'
 
 const App = () => {
     return (
@@ -41,6 +42,9 @@ const App = () => {
             <Route path="/viewcontent" element={<ViewIndividualContent />} /> {/**component */}
             <Route path="/previewupdatecontent" element={<PreviewUpdateContent />} /> {/**component */}
             <Route path="/previewcreatecontent" element={<PreviewCreateContent />} /> {/**component */}
+
+            {/* Test page */}
+            {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/admincontentlist" element={<AdminContentList />} /> */}
             <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,17 +1,67 @@
 // frontend/src/components/PageEditor.js
-import React, { useEffect, useContext } from "react";
+import React, { /*useState,*/ useEffect, useContext } from "react";
 import { useNavigate/*, useLocation*/ } from "react-router-dom";
 import { SharePreviewDataContext } from "../Context_API/sharePreviewData";
 import "react-quill/dist/quill.snow.css";
 // import DraftEditor from "../tool_components/DraftEditor";
 import ReactQuillEditor from "../tool_components/ReactQuillEditor";
+import ImageUpload from "../tool_components/ImageUpload";
 import "./styles/admin_components.scss"
 
 const AdminCreateContent = () => {
     const navigate = useNavigate();
-    const { createTitle, setCreateTitle, createBody, setCreateBody } = useContext(SharePreviewDataContext);
+    const { createTitle, setCreateTitle, createImage, setCreateImage, createBody, setCreateBody, category, setCategory, tags, setTags, metaDescription, setMetaDescription } = useContext(SharePreviewDataContext);
 
     
+
+
+    // console.log(createImage.name)
+
+    // const formDataObj = {}
+
+    const formData = {
+        "title": createTitle,
+        "body": createBody,
+        "category": category,
+        "tags": tags,
+        "meta_description": metaDescription
+    }
+
+
+
+    if (createImage !== null) {
+        formData["image_url"] = createImage["image_code"]
+    } else {
+        formData["image_file"] = createImage
+        // if (typeof createImage["image_code"] === "string") {
+        
+        // }
+    }
+
+    const jsonString = JSON.stringify(formData);
+    // const formData = new FormData();
+    // formData.append("title", createTitle);
+    // formData.append("body", createBody);
+    // formData.append("category", category);
+    // formData.append("tags", tags);
+    // formData.append("meta_description", metaDescription);
+    // if (createImage !== null) {
+    //     if (typeof createImage["image_code"] === "string") {
+    //         formData.append("image_url", createImage["image_code"]);
+    //     } else {
+    //         formData.append("image_file", createImage);
+    //     }
+    // }
+
+    // console.log(formData)
+    // formData.forEach((value, key) => { 
+    //     formDataObj[key] = value; 
+    // }); 
+
+    // const jsonString = JSON.stringify(formDataObj);
+
+    console.log(createImage)
+    console.log(jsonString)
 
     // Saving new data to database
     const handleSave = () => {
@@ -21,7 +71,7 @@ const AdminCreateContent = () => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ title: createTitle, body: createBody }),
+            body: jsonString,
         }).then((res) => res.json()).then((data) => {
             console.log("Content saved:", data);
             alert("Content saved:", data)
@@ -29,11 +79,48 @@ const AdminCreateContent = () => {
             // Clear input field
             setCreateTitle()
             setCreateBody()
+            setCategory()
+            setTags()
+            setMetaDescription()
             localStorage.removeItem('localCreateTitle')
             localStorage.removeItem('localCreateBody')
             navigate(`/admin/contents`);
         });
     };
+
+
+
+   
+    // Saving new data to database
+    // const handleSave = () => {
+    //     // Submit to the backend
+    //     fetch("http://127.0.0.1:5000/content", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({ 
+    //             title: createTitle, 
+    //             body: createBody, 
+    //             category,
+    //             tags,
+    //             meta_description: metaDescription
+    //         }),
+    //     }).then((res) => res.json()).then((data) => {
+    //         console.log("Content saved:", data);
+    //         alert("Content saved:", data)
+
+    //         // Clear input field
+    //         setCreateTitle()
+    //         setCreateBody()
+    //         setCategory()
+    //         setTags()
+    //         setMetaDescription()
+    //         localStorage.removeItem('localCreateTitle')
+    //         localStorage.removeItem('localCreateBody')
+    //         navigate(`/admin/contents`);
+    //     });
+    // };
 
    
 
@@ -62,6 +149,9 @@ const AdminCreateContent = () => {
     function goBackToContentList() {
         setCreateTitle()
         setCreateBody()
+        setCategory()
+        setTags()
+        setMetaDescription()
         localStorage.removeItem('localCreateTitle')
         localStorage.removeItem('localCreateBody')
         navigate("/admin/contents")
@@ -118,10 +208,43 @@ const AdminCreateContent = () => {
             <input 
                 type="text" 
                 placeholder="Title" 
-                value={createTitle} 
+                value={createTitle || ""} 
                 onChange={(e) => setCreateTitle(e.target.value)} 
             />
+            <ImageUpload setCurrentImageUpload={setCreateImage} currentImageUpload={createImage} />
             <ReactQuillEditor value={createBody} setValue={setCreateBody} />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <div>
+                <input
+                    type="text"
+                    placeholder="Category"
+                    value={category || ""}
+                    onChange={(e) => setCategory(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    type="text"
+                    placeholder="Tags (comma-separated)"
+                    value={tags || ""}
+                    onChange={(e) => setTags(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    type="text"
+                    placeholder="Meta Description"
+                    value={metaDescription || ""}
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                />
+            </div>
             <br />
             <br />
             <br />
