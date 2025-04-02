@@ -48,7 +48,7 @@ const PreviewUpdateContent = () => {
 
             // Clear the Context API for next use
             setUpdateTitle()
-            setUpdateImage()
+            setUpdateImage({ "image_code": "" })
             setUpdateBody()
             setCategory()
             setTags()
@@ -57,6 +57,7 @@ const PreviewUpdateContent = () => {
             localStorage.removeItem('localUpdateImage')
             localStorage.removeItem('localUpdateImageCopy')
             localStorage.removeItem('localUpdateBody')
+            localStorage.removeItem('localUpdateContentID')
 
             // Go back to content list
             navigateRoute("/admin/contents");
@@ -69,6 +70,9 @@ const PreviewUpdateContent = () => {
     // Navigate back to Update Component
     function handleBackToAdminUpdate() {
         navigateRoute("/admin/updatecontent", { state: { previewTitle: updateTitle, previewImage: updateImage, previewBody: updateBody, previewContentID: content_ID } });
+        // setUpdateContentID(localStorage.getItem("localUpdateContentID"))
+        console.log("Exit preview update")
+        setUpdateContentID(updateContentID)
     };
 
     // console.log("Status in Preview component ", updateTitle, updateBody)
@@ -119,6 +123,8 @@ const PreviewUpdateContent = () => {
               const localUpdateContent_ID_FromLS = localStorage.getItem('localUpdateContentID')
               setUpdateContentID(localUpdateContent_ID_FromLS)
             }
+
+            // return "I just reloaded the image and other contents"
           } else if (navType === "navigate") { 
             console.log("Page loaded normally");
           }
@@ -131,6 +137,7 @@ const PreviewUpdateContent = () => {
     console.log(localUpdateImageFromLS)
     console.log(updateImage.image_code)
 
+    console.log(updateContentID)
 
 
 
